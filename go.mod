@@ -13,6 +13,7 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/jezek/xgb v1.1.1 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
+	github.com/mattn/go-sqlite3 v1.14.32 // indirect
 	github.com/streadway/amqp v1.1.0 // indirect
 	golang.org/x/sync v0.17.0 // indirect
 	golang.org/x/sys v0.36.0 // indirect

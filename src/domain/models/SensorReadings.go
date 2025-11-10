@@ -3,7 +3,7 @@ package models
 type SensorReadings struct {
 	IdSensorReading	int
 	Value 			float32
-	timestamp		string
+	Timestamp		string
 	IdSensor		string
-	backed			bool
+	Backed			bool
 }
