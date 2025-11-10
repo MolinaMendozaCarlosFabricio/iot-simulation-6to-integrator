@@ -33,6 +33,13 @@ type GameManager struct {
 	iotImg *ebiten.Image
 	waterBucketImg *ebiten.Image
 	sensorSprites map[string]*ebiten.Image
+
+	//animacion de flechas
+
+	tempAnim *SpriteAnimation
+	// phAnim   *SpriteAnimation
+	// tdsAnim  *SpriteAnimation
+	// ntuAnim  *SpriteAnimation
 }
 
 func NewGame() *GameManager {	
@@ -73,6 +80,38 @@ func NewGame() *GameManager {
 	sprites["NTU_DANGER"], _, _ = ebitenutil.NewImageFromFile("assets/ntu_sensor/ntu_sensor_1-new.png")
 
 
+
+	//ANIMACIONES DE FLECHAS
+	
+
+		// TEMP
+	tempFrames := []*ebiten.Image{
+		MustNewImageFromFile("assets/temp_sensor/arrowA1.png"),
+		MustNewImageFromFile("assets/temp_sensor/arrowA2.png"),
+		MustNewImageFromFile("assets/temp_sensor/arrowA3.png"),
+	}
+
+	
+	// phFrames := []*ebiten.Image{
+	// 	MustNewImageFromFile("assets/ph_sensor/arrow_ph1.png"),
+	// 	MustNewImageFromFile("assets/ph_sensor/arrow_ph2.png"),
+	// 	MustNewImageFromFile("assets/ph_sensor/arrow_ph3.png"),
+	// }
+	
+	// // TDS
+	// tdsFrames := []*ebiten.Image{
+	// 	MustNewImageFromFile("assets/tds_sensor/arrow_tds1.png"),
+	// 	MustNewImageFromFile("assets/tds_sensor/arrow_tds2.png"),
+	// 	MustNewImageFromFile("assets/tds_sensor/arrow_tds3.png"),
+	// }
+
+	
+	// // NTU
+	// ntuFrames := []*ebiten.Image{
+	// 	MustNewImageFromFile("assets/ntu_sensor/arrow_ntu1.png"),
+	// 	MustNewImageFromFile("assets/ntu_sensor/arrow_ntu2.png"),
+	// 	MustNewImageFromFile("assets/ntu_sensor/arrow_ntu3.png"),
+	// }
 	
 	
 	
@@ -87,13 +126,24 @@ func NewGame() *GameManager {
 		sensorSprites: sprites,
 		waterBucketImg: bucketImg,
 
+		tempAnim: NewAnimation(tempFrames, 10),
+		// phAnim: NewAnimation(phFrames, 10),
+		// tdsAnim: NewAnimation(tdsFrames, 10),
+		// ntuAnim: NewAnimation(ntuFrames, 10),
+
 		resolution_w:  1280, 
         resolution_h:  720,
+		
 	}
 }
 
 func (g *GameManager) Update() error {
-    
+
+	g.tempAnim.Update()
+    // g.phAnim.Update()
+	// g.tdsAnim.Update()
+	// g.ntuAnim.Update()
+
 	return nil
 }
 
@@ -221,5 +271,19 @@ func (g *GameManager) Draw(screen *ebiten.Image){
 	ebitenutil.DebugPrint(screen, debugText)
 
 
+	//animaciones
+	g.tempAnim.Draw(screen, float64(700), float64(260))
+	// g.phAnim.Draw(screen, float64(784), float64(338)) 
+	// g.tdsAnim.Draw(screen, float64(280), float64(100))
+	// g.ntuAnim.Draw(screen, float64(280), float64(338))
 
+}
+
+
+func MustNewImageFromFile(path string) *ebiten.Image {
+	img, _, err := ebitenutil.NewImageFromFile(path)
+	if err != nil {
+		log.Fatalf("Error al cargar imagen (Must): %s - %v", path, err)
+	}
+	return img
 }
