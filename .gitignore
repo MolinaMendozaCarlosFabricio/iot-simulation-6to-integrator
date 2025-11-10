@@ -1,2 +1,4 @@
 src/config/userdata.json
 .env
+*.db
+*.db-journal

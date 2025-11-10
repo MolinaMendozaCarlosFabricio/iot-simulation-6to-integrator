@@ -22,6 +22,8 @@ type GameManager struct {
 	value_temp    float32
 	value_tds     float32
 	cancelContext context.CancelFunc
+	finish		  bool
+	exitStatus	  error
 
 	stateMutex sync.RWMutex
 
@@ -42,7 +44,7 @@ type GameManager struct {
 	// ntuAnim  *SpriteAnimation
 }
 
-func NewGame() *GameManager {	
+func NewGame(cancelCtx context.CancelFunc, exitStatus error) *GameManager {	
 	
 	//imagnes y sprites
 
@@ -133,7 +135,9 @@ func NewGame() *GameManager {
 
 		resolution_w:  1280, 
         resolution_h:  720,
-		
+		cancelContext: cancelCtx,
+		finish: false,
+		exitStatus: exitStatus,
 	}
 }
 
@@ -144,6 +148,13 @@ func (g *GameManager) Update() error {
 	// g.tdsAnim.Update()
 	// g.ntuAnim.Update()
 
+	// Al presionar Esc o finalizar desde otra goroutine, termina juego
+	if ebiten.IsKeyPressed(ebiten.KeyEscape) || g.finish {
+		println("Cancelando contexto y cerrando juego...")
+		// Cierra todas las goroutines
+		g.cancelContext()
+		return g.exitStatus
+	}
 	return nil
 }
 
