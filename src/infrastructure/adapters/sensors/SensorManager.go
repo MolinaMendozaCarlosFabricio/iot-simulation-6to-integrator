@@ -32,7 +32,7 @@ func NewSensorsManager(
 	}
 }
 
-func (sm *SimulatedSensorsManager)InitSensorReadings(n_instances int) {
+func (sm *SimulatedSensorsManager)InitSensorReadings(n_instances int, updater application.UIStatePusher) {
 	var sensorFunctions []func()(float32, error)
 	sensorFunctions = append(sensorFunctions, sm.measureTemp)
 	sensorFunctions = append(sensorFunctions, sm.measureTDS)
@@ -45,6 +45,7 @@ func (sm *SimulatedSensorsManager)InitSensorReadings(n_instances int) {
 			sensorFunctions,
 			sm.ctx,
 			sm.config,
+			updater,
 		)
 	}
 }

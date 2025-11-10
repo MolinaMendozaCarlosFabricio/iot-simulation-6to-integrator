@@ -14,6 +14,8 @@ require (
 	github.com/jezek/xgb v1.1.1 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/streadway/amqp v1.1.0 // indirect
+	golang.org/x/image v0.32.0 // indirect
 	golang.org/x/sync v0.17.0 // indirect
 	golang.org/x/sys v0.36.0 // indirect
+	golang.org/x/text v0.30.0 // indirect
 )
