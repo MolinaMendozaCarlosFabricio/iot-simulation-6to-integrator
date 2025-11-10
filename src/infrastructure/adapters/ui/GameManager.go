@@ -3,6 +3,7 @@ package ui
 import (
 	"context"
 	"log"
+	"sync"
 
 	"fmt"
 	"image/color"
@@ -22,8 +23,10 @@ type GameManager struct {
 	value_tds     float32
 	cancelContext context.CancelFunc
 
+	stateMutex sync.RWMutex
+
 	//inyectada
-	sensorService application.SensorReader
+	
 	latestData application.SensorDisplayDTO
 	
 	//sprites, fondos, img, etc.
@@ -32,7 +35,7 @@ type GameManager struct {
 	sensorSprites map[string]*ebiten.Image
 }
 
-func NewGame(svc application.SensorReader) *GameManager {	
+func NewGame() *GameManager {	
 	
 	//imagnes y sprites
 
@@ -78,7 +81,7 @@ func NewGame(svc application.SensorReader) *GameManager {
 		value_ntu:  0,
 		value_temp: 0,
 		value_tds:  0,
-		sensorService: svc,
+
 		 
 		iotImg: deviceImg,
 		sensorSprites: sprites,
@@ -90,10 +93,19 @@ func NewGame(svc application.SensorReader) *GameManager {
 }
 
 func (g *GameManager) Update() error {
-	g.latestData = g.sensorService.GetLatestReadings()
     
 	return nil
 }
+
+func (g *GameManager) UpdateState(dto application.SensorDisplayDTO) {
+	// para poder escrinir
+	g.stateMutex.Lock() 
+	defer g.stateMutex.Unlock()
+
+	//save el dto
+	g.latestData = dto
+}
+
 
 func (g *GameManager) Layout(outsideWidth, outsideHeight int) (int, int){
 	return g.resolution_w, g.resolution_h
@@ -104,31 +116,30 @@ func (g *GameManager) Draw(screen *ebiten.Image){
 	
 	screen.Fill(color.White)
 
+	//para ller 
+	g.stateMutex.RLock() 
+	currentData := g.latestData 
+	g.stateMutex.RUnlock() 
+
 
 	//iot en medio
 	if g.iotImg != nil {
 		opDevice := &ebiten.DrawImageOptions{}
-		imgWidth, imgHeight := g.iotImg.Size()
-		centerX := float64(g.resolution_w/2) - float64(imgWidth/2)
-		centerY := float64(g.resolution_h/2) - float64(imgHeight/2)
-		opDevice.GeoM.Translate(centerX, centerY)
+		opDevice.GeoM.Translate(float64(512), float64(52))
 		screen.DrawImage(g.iotImg, opDevice)
 	}
 
 	//agua
 	if g.waterBucketImg != nil {
 		opBucket := &ebiten.DrawImageOptions{}
-		imgWidth, imgHeight := g.waterBucketImg.Size()
-		centerX := float64(g.resolution_w/2) - float64(imgWidth/2)
-		centerY := float64(g.resolution_h/2) - float64(imgHeight/2) + 150
-		opBucket.GeoM.Translate(centerX, centerY)
+		opBucket.GeoM.Translate(float64(480), float64(400))
 		screen.DrawImage(g.waterBucketImg, opBucket)
 	}
 
 
 	//PH
 	var phSprite *ebiten.Image
-    switch g.latestData.PHState {
+    switch currentData.PHState {
     case "WARNING":
         phSprite = g.sensorSprites["PH_WARNING"]
     case "DANGER":
@@ -145,7 +156,7 @@ func (g *GameManager) Draw(screen *ebiten.Image){
 
 	//TDS
 	var tdsSprite *ebiten.Image
-	switch g.latestData.TDSState {
+	switch currentData.TDSState {
 	case "WARNING":
 		tdsSprite = g.sensorSprites["TDS_WARNING"]
 	case "DANGER":
@@ -162,7 +173,7 @@ func (g *GameManager) Draw(screen *ebiten.Image){
 
 	//TEMPERATURA
 	var tempSprite *ebiten.Image
-	switch g.latestData.TempState {
+	switch currentData.TempState {
 	case "WARNING":
 		tempSprite = g.sensorSprites["TEMP_WARNING"]
 	case "DANGER":
@@ -179,7 +190,7 @@ func (g *GameManager) Draw(screen *ebiten.Image){
 
 	//NTU
 	var ntuSprite *ebiten.Image
-	switch g.latestData.TurbState {
+	switch currentData.TurbState {
 	case "WARNING":
 		ntuSprite = g.sensorSprites["NTU_WARNING"]
 	case "DANGER":
@@ -195,19 +206,19 @@ func (g *GameManager) Draw(screen *ebiten.Image){
 	}
 
 	safeText := "NO REUTILIZABLE"
-    if g.latestData.IsWaterSafe {
+    if currentData.IsWaterSafe {
         safeText = "REUTILIZABLE"
     }
 
 	debugText := fmt.Sprintf(
-        "ESTADO: %s\n\nPH: %.2f (%s)\nTEMP: %.2f (%s)\nTDS: %.2f (%s)\nTURB: %.2f (%s)",
-        safeText,
-        g.latestData.PHValue, g.latestData.PHState,
-        g.latestData.TempValue, g.latestData.TempState,
-        g.latestData.TDSValue, g.latestData.TDSState,
-        g.latestData.TurbValue, g.latestData.TurbState,
-    )
-    ebitenutil.DebugPrint(screen, debugText)
+		"ESTADO: %s\n\nPH: %.2f (%s)\nTEMP: %.2f (%s)\nTDS: %.2f (%s)\nTURB: %.2f (%s)",
+		safeText,
+		currentData.PHValue, currentData.PHState,
+		currentData.TempValue, currentData.TempState,
+		currentData.TDSValue, currentData.TDSState,
+		currentData.TurbValue, currentData.TurbState,
+	)
+	ebitenutil.DebugPrint(screen, debugText)
 
 
 

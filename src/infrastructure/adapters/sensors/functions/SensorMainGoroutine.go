@@ -15,6 +15,9 @@ func ExecuteSensors(
 	sensorFunctions []func()(float32, error),
 	ctx 			context.Context,
 	configDevice 	models.ConfigDevice,
+
+
+	updater  application.UIStatePusher,
 ) {
 	chanOut := make(chan models.FanOutData)
 	chanIn := make(chan models.FanInData)
@@ -81,7 +84,14 @@ func ExecuteSensors(
 			}
 		}
 
+		// para validar, ando llamdno al caso de uso
 		msruc.Execute(sendThisRecords)
+
+		isSafe := vruc.Execute(sendThisRecords)
+
+		dto := translateToDTO(sendThisRecords, isSafe)
+
+		updater.UpdateState(dto)
 
 		n_iterations++
 
@@ -92,5 +102,42 @@ func ExecuteSensors(
 				println("Continuando toma de datos")
 				time.Sleep(5 * time.Second)
 		}
+	}
+
+
+	
+}
+
+func translateToDTO(pack models.PackageSensorReadings, isSafe bool) application.SensorDisplayDTO {
+
+	tempValue := pack.SensorReadings[0].Value
+	tdsValue  := pack.SensorReadings[1].Value
+	phValue   := pack.SensorReadings[2].Value
+	ntuValue  := pack.SensorReadings[3].Value
+
+	// para calcular el estado de cada sensor
+	tempState := "NORMAL"
+	if tempValue < 10 || tempValue > 40 { tempState = "DANGER" }
+	
+	phState := "NORMAL"
+	if phValue < 5 || phValue > 9 { phState = "DANGER" }
+	
+	tdsState := "NORMAL"
+	if tdsValue > 1500 { tdsState = "DANGER" }
+
+	ntuState := "NORMAL"
+	if ntuValue > 40 { ntuState = "DANGER" }
+	
+	// pal dtop 
+	return application.SensorDisplayDTO{
+		PHValue:     phValue,
+		PHState:     phState,
+		TDSValue:    tdsValue,
+		TDSState:    tdsState,
+		TempValue:   tempValue,
+		TempState:   tempState,
+		TurbValue:   ntuValue,
+		TurbState:   ntuState,
+		IsWaterSafe: isSafe,
 	}
 }

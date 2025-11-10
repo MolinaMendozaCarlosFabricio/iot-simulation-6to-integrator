@@ -3,7 +3,6 @@ package main
 import (
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"simulator.iot.integrator.6th/src/application"
 	"simulator.iot.integrator.6th/src/infrastructure/adapters/ui"
 
 	"context"
@@ -17,16 +16,7 @@ import (
 
 
 func main() {
-    appService := application.NewMockSensorService()
 
-    game := ui.NewGame(appService)
-
-	ebiten.SetWindowSize(1280, 720) 
-	ebiten.SetWindowTitle("Simulador IoT (Usando Mock)")
-
-	if err := ebiten.RunGame(game); err != nil {
-		log.Fatal(err)
-	}
 	
 	
 	err := godotenv.Load()
@@ -41,7 +31,15 @@ func main() {
 	)
 	sensorManager := infrastructure.GetSensorManager()
 
-	sensorManager.InitSensorReadings(1)
-	for {}
+	game := ui.NewGame()
+	log.Println("icniando los snesoressss...")
+	go sensorManager.InitSensorReadings(1, game)	
+
+	ebiten.SetWindowSize(1280, 720)
+	ebiten.SetWindowTitle("Simulador IoT - AquaFlow)")
+
+	if err := ebiten.RunGame(game); err != nil {
+		log.Fatal(err)
+	}
 
 }
