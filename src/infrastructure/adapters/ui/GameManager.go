@@ -35,13 +35,16 @@ type GameManager struct {
 	iotImg *ebiten.Image
 	waterBucketImg *ebiten.Image
 	sensorSprites map[string]*ebiten.Image
+	awsImg *ebiten.Image
+	bdImg  *ebiten.Image
 
 	//animacion de flechas
 
 	tempAnim *SpriteAnimation
-	// phAnim   *SpriteAnimation
-	// tdsAnim  *SpriteAnimation
-	// ntuAnim  *SpriteAnimation
+	phAnim   *SpriteAnimation
+	tdsAnim  *SpriteAnimation
+	ntuAnim  *SpriteAnimation
+	awsAnim *SpriteAnimation
 }
 
 func NewGame(cancelCtx context.CancelFunc, exitStatus error) *GameManager {	
@@ -54,9 +57,22 @@ func NewGame(cancelCtx context.CancelFunc, exitStatus error) *GameManager {
 		log.Fatalf("Error al cargar iot_device.png: %v", err)
 	}
 
+	//bucket
 	bucketImg, _, err := ebitenutil.NewImageFromFile("assets/iot/bucket.png")
 	if err != nil {
 		log.Fatalf("Error al cargar wl water: %v", err)
+	}
+
+	//aws
+	awsImg, _, err := ebitenutil.NewImageFromFile("assets/aws/aws_1-new.png")
+	if err != nil {
+		log.Fatalf("Error al cargar aws.png: %v", err)
+	}
+
+	//bd
+	bdImg, _, err := ebitenutil.NewImageFromFile("assets/db/db_1-new.png")
+	if err != nil {
+		log.Fatalf("Error al cargar bd.png: %v", err)
 	}
 	
 	sprites := make(map[string]*ebiten.Image)
@@ -94,27 +110,41 @@ func NewGame(cancelCtx context.CancelFunc, exitStatus error) *GameManager {
 	}
 
 	
-	// phFrames := []*ebiten.Image{
-	// 	MustNewImageFromFile("assets/ph_sensor/arrow_ph1.png"),
-	// 	MustNewImageFromFile("assets/ph_sensor/arrow_ph2.png"),
-	// 	MustNewImageFromFile("assets/ph_sensor/arrow_ph3.png"),
-	// }
+	phFrames := []*ebiten.Image{
+		MustNewImageFromFile("assets/ph_sensor/arrowA1.png"),
+		MustNewImageFromFile("assets/ph_sensor/arrowA2.png"),
+		MustNewImageFromFile("assets/ph_sensor/arrowA3.png"),
+		MustNewImageFromFile("assets/ph_sensor/arrowA4.png"),
+		MustNewImageFromFile("assets/ph_sensor/arrowA5.png"),
+		MustNewImageFromFile("assets/ph_sensor/arrowA6.png"),
+	}
 	
-	// // TDS
-	// tdsFrames := []*ebiten.Image{
-	// 	MustNewImageFromFile("assets/tds_sensor/arrow_tds1.png"),
-	// 	MustNewImageFromFile("assets/tds_sensor/arrow_tds2.png"),
-	// 	MustNewImageFromFile("assets/tds_sensor/arrow_tds3.png"),
-	// }
+	// TDS
+	tdsFrames := []*ebiten.Image{
+		MustNewImageFromFile("assets/tds_sensor/arrowA1.png"),
+		MustNewImageFromFile("assets/tds_sensor/arrowA2.png"),
+		MustNewImageFromFile("assets/tds_sensor/arrowA3.png"),
+
+		
+	}
 
 	
-	// // NTU
-	// ntuFrames := []*ebiten.Image{
-	// 	MustNewImageFromFile("assets/ntu_sensor/arrow_ntu1.png"),
-	// 	MustNewImageFromFile("assets/ntu_sensor/arrow_ntu2.png"),
-	// 	MustNewImageFromFile("assets/ntu_sensor/arrow_ntu3.png"),
-	// }
+	// NTU
+	ntuFrames := []*ebiten.Image{
+		MustNewImageFromFile("assets/ntu_sensor/arrowA1.png"),
+		MustNewImageFromFile("assets/ntu_sensor/arrowA2.png"),
+		MustNewImageFromFile("assets/ntu_sensor/arrowA3.png"),
+		MustNewImageFromFile("assets/ntu_sensor/arrowA4.png"),
+		MustNewImageFromFile("assets/ntu_sensor/arrowA5.png"),
+		MustNewImageFromFile("assets/ntu_sensor/arrowA6.png"),
+	}
 	
+	// AWS
+	awsFrames := []*ebiten.Image{
+		MustNewImageFromFile("assets/aws/arrowA1.png"),
+		MustNewImageFromFile("assets/aws/arrowA2.png"),
+		MustNewImageFromFile("assets/aws/arrowA3.png"),
+	}
 	
 	
 	return &GameManager{
@@ -127,11 +157,14 @@ func NewGame(cancelCtx context.CancelFunc, exitStatus error) *GameManager {
 		iotImg: deviceImg,
 		sensorSprites: sprites,
 		waterBucketImg: bucketImg,
+		awsImg: awsImg,
+		bdImg: bdImg,
 
 		tempAnim: NewAnimation(tempFrames, 10),
-		// phAnim: NewAnimation(phFrames, 10),
-		// tdsAnim: NewAnimation(tdsFrames, 10),
-		// ntuAnim: NewAnimation(ntuFrames, 10),
+		phAnim: NewAnimation(phFrames, 10),
+		tdsAnim: NewAnimation(tdsFrames, 10),
+		ntuAnim: NewAnimation(ntuFrames, 10),
+		awsAnim: NewAnimation(awsFrames, 10),
 
 		resolution_w:  1280, 
         resolution_h:  720,
@@ -144,14 +177,15 @@ func NewGame(cancelCtx context.CancelFunc, exitStatus error) *GameManager {
 func (g *GameManager) Update() error {
 
 	g.tempAnim.Update()
-    // g.phAnim.Update()
-	// g.tdsAnim.Update()
-	// g.ntuAnim.Update()
+    g.phAnim.Update()
+	g.tdsAnim.Update()
+	g.ntuAnim.Update()
+	g.awsAnim.Update()
 
-	// Al presionar Esc o finalizar desde otra goroutine, termina juego
+	// para poder salir 
 	if ebiten.IsKeyPressed(ebiten.KeyEscape) || g.finish {
 		println("Cancelando contexto y cerrando juego...")
-		// Cierra todas las goroutines
+		// acá cierra los goroutines 
 		g.cancelContext()
 		return g.exitStatus
 	}
@@ -195,6 +229,20 @@ func (g *GameManager) Draw(screen *ebiten.Image){
 		opBucket := &ebiten.DrawImageOptions{}
 		opBucket.GeoM.Translate(float64(480), float64(400))
 		screen.DrawImage(g.waterBucketImg, opBucket)
+	}
+
+	//aws
+	if g.awsImg != nil {
+		opAws := &ebiten.DrawImageOptions{}
+		opAws.GeoM.Translate(float64(888), float64(-4))
+		screen.DrawImage(g.awsImg, opAws)
+	}
+
+	//bd
+	if g.bdImg != nil {
+		opBd := &ebiten.DrawImageOptions{}
+		opBd.GeoM.Translate(float64(201), float64(-4))
+		screen.DrawImage(g.bdImg, opBd)
 	}
 
 
@@ -284,9 +332,10 @@ func (g *GameManager) Draw(screen *ebiten.Image){
 
 	//animaciones
 	g.tempAnim.Draw(screen, float64(700), float64(260))
-	// g.phAnim.Draw(screen, float64(784), float64(338)) 
-	// g.tdsAnim.Draw(screen, float64(280), float64(100))
-	// g.ntuAnim.Draw(screen, float64(280), float64(338))
+	g.phAnim.Draw(screen, float64(619), float64(250)) 
+	g.tdsAnim.Draw(screen, float64(438), float64(240))
+	g.ntuAnim.Draw(screen, float64(393), float64(234))
+	g.awsAnim.Draw(screen, float64(752), float64(80))
 
 }
 
