@@ -1,3 +1,6 @@
 package repository
 
-type RabbitMQRepo interface {}
+type RabbitMQRepo interface {
+	PublishMessage(routingKey string, message interface{}) error
+	CloseConnection()
+}
