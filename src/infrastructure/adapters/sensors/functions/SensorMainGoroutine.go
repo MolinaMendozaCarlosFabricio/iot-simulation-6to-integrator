@@ -81,6 +81,8 @@ func ExecuteSensors(
 			}
 		}
 
+		msruc.Execute(sendThisRecords)
+
 		n_iterations++
 
 		select{

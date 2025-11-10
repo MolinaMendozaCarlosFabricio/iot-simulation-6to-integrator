@@ -9,6 +9,7 @@ import (
 
 	"simulator.iot.integrator.6th/src/application"
 	"simulator.iot.integrator.6th/src/domain/models"
+	"simulator.iot.integrator.6th/src/infrastructure/adapters/queue"
 	"simulator.iot.integrator.6th/src/infrastructure/adapters/sensors/functions"
 )
 
@@ -21,9 +22,10 @@ type SimulatedSensorsManager struct {
 
 func NewSensorsManager(
 	ctx context.Context,
+	rabbitMQ queue.RabbitMQManager,
 ) *SimulatedSensorsManager {
 	return&SimulatedSensorsManager{
-		manageSensorReadingsUc: *application.NewManageSensorReadingsUC(),
+		manageSensorReadingsUc: *application.NewManageSensorReadingsUC(&rabbitMQ),
 		validateReadingsUC: *application.NewValidateReadingsUC(),
 		ctx: ctx,
 		config: *getConfigSensor(),
