@@ -1,0 +1,28 @@
+{
+    "device_id": "Inserte aquí el UUID del dispositivo",
+    "user_id": "Inserte aquí el UUID del usuario",
+    "model": "Inserte modelo del dispositivo",
+    "created_at": "Inserte fecha de creación",
+    "sensors_info": [
+        {
+            "sensor": "Sensor de Temperatura",
+            "sensor_name_model": "Inserte nombre y modelo del sensor",
+            "sensor_id": "Inserte UUID del sensor"
+        },
+        {
+            "sensor": "Sensor de TDS",
+            "sensor_name_model": "Inserte nombre y modelo del sensor",
+            "sensor_id": "Inserte UUID del sensor"
+        },
+        {
+            "sensor": "Sensor de PH",
+            "sensor_name_model": "Inserte nombre y modelo del sensor",
+            "sensor_id": "Inserte UUID del sensor"
+        },
+        {
+            "sensor": "Sensor de Turbidez",
+            "sensor_name_model": "Inserte nombre y modelo del sensor",
+            "sensor_id": "Inserte UUID del sensor"
+        }
+    ]
+}
