@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"simulator.iot.integrator.6th/src/infrastructure/adapters/ui"
@@ -23,7 +24,7 @@ func main() {
 	if err != nil {
 		log.Println("Error al cargar variables de entorno:", err)
 	}
-	ctx, _ := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(context.Background())
 	infrastructure.InitDependencies(
 		ctx,
 		os.Getenv("AMQP_URL"),
@@ -31,14 +32,15 @@ func main() {
 	)
 	sensorManager := infrastructure.GetSensorManager()
 
-	game := ui.NewGame()
-	log.Println("icniando los snesoressss...")
+	exitStatus := errors.New("exit game")
+	game := ui.NewGame(cancelFunc, exitStatus)
+	log.Println("icniando los sensores...")
 	go sensorManager.InitSensorReadings(1, game)	
 
 	ebiten.SetWindowSize(1280, 720)
-	ebiten.SetWindowTitle("Simulador IoT - AquaFlow)")
+	ebiten.SetWindowTitle("Simulador IoT - AquaFlow")
 
-	if err := ebiten.RunGame(game); err != nil {
+	if err := ebiten.RunGame(game); err != nil && err != exitStatus {
 		log.Fatal(err)
 	}
 
