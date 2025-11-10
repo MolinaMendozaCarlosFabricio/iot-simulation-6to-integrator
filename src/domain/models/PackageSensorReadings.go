@@ -1,9 +1,9 @@
 package models
 
 type PackageSensorReadings struct {
-	IdUser			string					`json:"id_user"`
-	IdFiltrer		string					`json:"id_device"`
-	SensorReadings []SensorReadingChunck	`json:"sensorReadings"`
+	IdUser         string                `json:"idUser"`
+	IdFilter      string                 `json:"idFilter"`
+	SensorReadings []SensorReadingChunck `json:"sensorReadings"`
 }
 
 type SensorReadingChunck struct {
