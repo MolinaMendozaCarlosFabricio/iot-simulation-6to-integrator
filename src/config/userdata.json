@@ -1,28 +1,28 @@
 {
-    "device_id": "Inserte aquí el UUID del dispositivo",
-    "user_id": "Inserte aquí el UUID del usuario",
-    "model": "Inserte modelo del dispositivo",
-    "created_at": "Inserte fecha de creación",
+    "device_id": "272d17f8-e0ad-4b9b-b9aa-34ef9d926775",
+    "user_id": "3c2f0f6e-b8fd-4744-b2cb-19eb3539b51c",
+    "model": "WhoFilter01",
+    "created_at": "2025-11-09T18:45:00Z",
     "sensors_info": [
         {
             "sensor": "Sensor de Temperatura",
-            "sensor_name_model": "Inserte nombre y modelo del sensor",
-            "sensor_id": "Inserte UUID del sensor"
+            "sensor_name_model": "DHT11",
+            "sensor_id": "79a1f967-689f-491c-9b62-8ff0cfc479d5"
         },
         {
             "sensor": "Sensor de TDS",
-            "sensor_name_model": "Inserte nombre y modelo del sensor",
-            "sensor_id": "Inserte UUID del sensor"
+            "sensor_name_model": "tds meter v1",
+            "sensor_id": "3651ddcb-c718-4ab4-8dd5-bab1af104af7"
         },
         {
             "sensor": "Sensor de PH",
-            "sensor_name_model": "Inserte nombre y modelo del sensor",
-            "sensor_id": "Inserte UUID del sensor"
+            "sensor_name_model": "OEM",
+            "sensor_id": "feb202ca-7e9b-41ba-bed7-e713c3f7ed07"
         },
         {
             "sensor": "Sensor de Turbidez",
-            "sensor_name_model": "Inserte nombre y modelo del sensor",
-            "sensor_id": "Inserte UUID del sensor"
+            "sensor_name_model": "OEM",
+            "sensor_id": "9f3f68fa-4b75-4e4d-a307-810b0f5ba60f"
         }
     ]
 }

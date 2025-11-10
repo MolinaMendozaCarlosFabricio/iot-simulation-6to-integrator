@@ -10,11 +10,11 @@ import (
 )
 
 func ExecuteSensors(
-	msruc 			application.ManageSensorReadingsUC, 
-	vruc 			application.ValidateReadingsUC,
-	sensorFunctions []func()(float32, error),
-	ctx 			context.Context,
-	configDevice 	models.ConfigDevice,
+	msruc application.ManageSensorReadingsUC,
+	vruc application.ValidateReadingsUC,
+	sensorFunctions []func() (float32, error),
+	ctx context.Context,
+	configDevice models.ConfigDevice,
 
 
 	updater  application.UIStatePusher,
@@ -30,14 +30,14 @@ func ExecuteSensors(
 		for i := 0; i < 4; i++ {
 			chanOut <- models.FanOutData{
 				SensorID: configDevice.Sensors_info[i].Sensor_id,
-				Name: configDevice.Sensors_info[i].Sensor,
+				Name:     configDevice.Sensors_info[i].Sensor,
 				Function: sensorFunctions[i],
 			}
 		}
 
 		var recordsTaken []models.SensorReadingsTaken
 		for i := 0; i < 4; i++ {
-			result := <- chanIn
+			result := <-chanIn
 			if result.Err != nil {
 				log.Fatal(result.Err)
 			}
@@ -45,27 +45,32 @@ func ExecuteSensors(
 		}
 
 		var sendThisRecords models.PackageSensorReadings
-		sendThisRecords.IdFiltrer = configDevice.Device_id
+		sendThisRecords.IdFilter = configDevice.Device_id
 		sendThisRecords.IdUser = configDevice.User_id
 		for i := 0; i < 4; i++ {
 			sendThisRecords.SensorReadings = append(
 				sendThisRecords.SensorReadings,
 				models.SensorReadingChunck{
-					Id: 0,
+					Id:       0,
 					SensorId: "",
-					Date: "",
-					Value: 0,
+					Date:     "",
+					Value:    0,
 				},
 			)
 		}
 
 		println("Iteración:", n_iterations)
 		for _, record := range recordsTaken {
+			parsedTime, err := time.Parse("2006-01-02 15:04:05", record.ReadingDate)
+			if err != nil {
+				log.Println("Error parseando fecha:", err)
+			}
+
 			sensorReadingChunk := models.SensorReadingChunck{
-				Id: record.MeasurementId,
+				Id:       record.MeasurementId,
 				SensorId: record.SensorId,
-				Date: record.ReadingDate,
-				Value: record.Value,
+				Date:     parsedTime.UTC().Format(time.RFC3339),
+				Value:    record.Value,
 			}
 			println(record.Name)
 			println(record.MeasurementId)
@@ -73,14 +78,14 @@ func ExecuteSensors(
 			println(record.ReadingDate)
 			println(record.Value)
 			switch record.Name {
-				case "Sensor de Temperatura":
-					sendThisRecords.SensorReadings[0] = sensorReadingChunk
-				case "Sensor de TDS":
-					sendThisRecords.SensorReadings[1] = sensorReadingChunk
-				case "Sensor de PH":
-					sendThisRecords.SensorReadings[2] = sensorReadingChunk
-				case "Sensor de Turbidez":
-					sendThisRecords.SensorReadings[3] = sensorReadingChunk
+			case "Sensor de Temperatura":
+				sendThisRecords.SensorReadings[0] = sensorReadingChunk
+			case "Sensor de TDS":
+				sendThisRecords.SensorReadings[1] = sensorReadingChunk
+			case "Sensor de PH":
+				sendThisRecords.SensorReadings[2] = sensorReadingChunk
+			case "Sensor de Turbidez":
+				sendThisRecords.SensorReadings[3] = sensorReadingChunk
 			}
 		}
 
@@ -95,17 +100,14 @@ func ExecuteSensors(
 
 		n_iterations++
 
-		select{
-			case <- ctx.Done():
-				return
-			default:
-				println("Continuando toma de datos")
-				time.Sleep(5 * time.Second)
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			println("Continuando toma de datos")
+			time.Sleep(5 * time.Second)
 		}
 	}
-
-
-	
 }
 
 func translateToDTO(pack models.PackageSensorReadings, isSafe bool) application.SensorDisplayDTO {
