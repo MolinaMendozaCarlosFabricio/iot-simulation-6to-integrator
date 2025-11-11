@@ -62,45 +62,12 @@ func NewGame(cancelCtx context.CancelFunc, exitStatus error) *GameManager {
 	
 	//imagnes y sprites
 
-	//iot
-	// deviceImg, _, err := ebitenutil.NewImageFromFile("assets/iot/iot_1-new.png") 
-    // if err != nil {
-	// 	log.Fatalf("Error al cargar iot_device.png: %v", err)
-	// }
-
 	//bucket
 	bucketImg, _, err := ebitenutil.NewImageFromFile("assets/iot/bucket.png")
 	if err != nil {
 		log.Fatalf("Error al cargar wl water: %v", err)
 	}
 
-	//aws
-
-
-	//bd
-
-	
-	// sprites := make(map[string]*ebiten.Image)
-
-	// //ph
-	// sprites["PH_NORMAL"], _, _ = ebitenutil.NewImageFromFile("assets/ph_sensor/ph_sensor_1-new.png")
-	// sprites["PH_WARNING"], _, _ = ebitenutil.NewImageFromFile("assets/ph_sensor/ph_sensor_1-new.png")
-	// sprites["PH_DANGER"], _, _ = ebitenutil.NewImageFromFile("assets/ph_sensor/ph_sensor_1-new.png")
-
-	// //tds
-	// sprites["TDS_NORMAL"], _, _ = ebitenutil.NewImageFromFile("assets/tds_sensor/tds_sensor_1-new.png")
-	// sprites["TDS_WARNING"], _, _ = ebitenutil.NewImageFromFile("assets/tds_sensor/tds_sensor_1-new.png")
-	// sprites["TDS_DANGER"], _, _ = ebitenutil.NewImageFromFile("assets/tds_sensor/tds_sensor_1-new.png")
-
-	// //temp
-	// sprites["TEMP_NORMAL"], _, _ = ebitenutil.NewImageFromFile("assets/temp_sensor/temp_sensor_1-new.png")
-	// sprites["TEMP_WARNING"], _, _ = ebitenutil.NewImageFromFile("assets/temp_sensor/temp_sensor_1-new.png")
-	// sprites["TEMP_DANGER"], _, _ = ebitenutil.NewImageFromFile("assets/temp_sensor/temp_sensor_1-new.png")
-
-	// //ntu
-	// sprites["NTU_NORMAL"], _, _ = ebitenutil.NewImageFromFile("assets/ntu_sensor/ntu_sensor_1-new.png")
-	// sprites["NTU_WARNING"], _, _ = ebitenutil.NewImageFromFile("assets/ntu_sensor/ntu_sensor_1-new.png")
-	// sprites["NTU_DANGER"], _, _ = ebitenutil.NewImageFromFile("assets/ntu_sensor/ntu_sensor_1-new.png")
 
 	//ANIMCACIONES DE SPRITES
 
@@ -313,78 +280,6 @@ func (g *GameManager) Draw(screen *ebiten.Image){
 		screen.DrawImage(g.waterBucketImg, opBucket)
 	}
 
-	//aws
-
-
-
-
-	//PH
-	// var phSprite *ebiten.Image
-    // switch currentData.PHState {
-    // case "WARNING":
-    //     phSprite = g.sensorSprites["PH_WARNING"]
-    // case "DANGER":
-    //     phSprite = g.sensorSprites["PH_DANGER"]
-    // default:
-    //     phSprite = g.sensorSprites["PH_NORMAL"]
-    // }
-
-	// if phSprite != nil {
-    //     opPH := &ebiten.DrawImageOptions{}
-	// 	opPH.GeoM.Translate(float64(768), float64(428))
-    //     screen.DrawImage(phSprite, opPH)
-    // }
-
-	// //TDS
-	// var tdsSprite *ebiten.Image
-	// switch currentData.TDSState {
-	// case "WARNING":
-	// 	tdsSprite = g.sensorSprites["TDS_WARNING"]
-	// case "DANGER":
-	// 	tdsSprite = g.sensorSprites["TDS_DANGER"]
-	// default:
-	// 	tdsSprite = g.sensorSprites["TDS_NORMAL"]
-	// }
-
-	// if tdsSprite != nil {
-	// 	opTDS := &ebiten.DrawImageOptions{}
-	// 	opTDS.GeoM.Translate(float64(272), float64(188)) 
-	// 	screen.DrawImage(tdsSprite, opTDS)
-	// }
-
-	// //TEMPERATURA
-	// var tempSprite *ebiten.Image
-	// switch currentData.TempState {
-	// case "WARNING":
-	// 	tempSprite = g.sensorSprites["TEMP_WARNING"]
-	// case "DANGER":
-	// 	tempSprite = g.sensorSprites["TEMP_DANGER"]
-	// default:
-	// 	tempSprite = g.sensorSprites["TEMP_NORMAL"]
-	// }
-
-	// if tempSprite != nil {
-	// 	opTemp := &ebiten.DrawImageOptions{}
-	// 	opTemp.GeoM.Translate(float64(777), float64(188)) 
-	// 	screen.DrawImage(tempSprite, opTemp)
-	// }
-
-	// //NTU
-	// var ntuSprite *ebiten.Image
-	// switch currentData.TurbState {
-	// case "WARNING":
-	// 	ntuSprite = g.sensorSprites["NTU_WARNING"]
-	// case "DANGER":
-	// 	ntuSprite = g.sensorSprites["NTU_DANGER"]
-	// default:
-	// 	ntuSprite = g.sensorSprites["NTU_NORMAL"]
-	// }
-
-	// if ntuSprite != nil {
-	// 	opNTU := &ebiten.DrawImageOptions{}
-	// 	opNTU.GeoM.Translate(float64(272), float64(428)) 
-	// 	screen.DrawImage(ntuSprite, opNTU)
-	// }
 
 	safeText := "NO REUTILIZABLE"
     if currentData.IsWaterSafe {
