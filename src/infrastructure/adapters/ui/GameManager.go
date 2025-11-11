@@ -35,51 +35,91 @@ type GameManager struct {
 	iotImg *ebiten.Image
 	waterBucketImg *ebiten.Image
 	sensorSprites map[string]*ebiten.Image
+	
+	
+	
+
+	//animacion de sprites
+	bdSpritesAnim  *SpriteAnimation
+	awsSpritesAnim *SpriteAnimation
+
+	iotSpritesAnim *SpriteAnimation
+	tempSpritesAnim *SpriteAnimation
+	phSpritesAnim *SpriteAnimation
+	tdsSpritesAnim *SpriteAnimation
+	ntuSpritesAnim *SpriteAnimation
 
 	//animacion de flechas
 
 	tempAnim *SpriteAnimation
-	// phAnim   *SpriteAnimation
-	// tdsAnim  *SpriteAnimation
-	// ntuAnim  *SpriteAnimation
+	phAnim   *SpriteAnimation
+	tdsAnim  *SpriteAnimation
+	ntuAnim  *SpriteAnimation
+	awsAnim *SpriteAnimation
 }
 
 func NewGame(cancelCtx context.CancelFunc, exitStatus error) *GameManager {	
 	
 	//imagnes y sprites
 
-	//iot
-	deviceImg, _, err := ebitenutil.NewImageFromFile("assets/iot/iot_1-new.png") 
-    if err != nil {
-		log.Fatalf("Error al cargar iot_device.png: %v", err)
-	}
-
+	//bucket
 	bucketImg, _, err := ebitenutil.NewImageFromFile("assets/iot/bucket.png")
 	if err != nil {
 		log.Fatalf("Error al cargar wl water: %v", err)
 	}
-	
-	sprites := make(map[string]*ebiten.Image)
 
-	//ph
-	sprites["PH_NORMAL"], _, _ = ebitenutil.NewImageFromFile("assets/ph_sensor/ph_sensor_1-new.png")
-	sprites["PH_WARNING"], _, _ = ebitenutil.NewImageFromFile("assets/ph_sensor/ph_sensor_1-new.png")
-	sprites["PH_DANGER"], _, _ = ebitenutil.NewImageFromFile("assets/ph_sensor/ph_sensor_1-new.png")
 
-	//tds
-	sprites["TDS_NORMAL"], _, _ = ebitenutil.NewImageFromFile("assets/tds_sensor/tds_sensor_1-new.png")
-	sprites["TDS_WARNING"], _, _ = ebitenutil.NewImageFromFile("assets/tds_sensor/tds_sensor_1-new.png")
-	sprites["TDS_DANGER"], _, _ = ebitenutil.NewImageFromFile("assets/tds_sensor/tds_sensor_1-new.png")
+	//ANIMCACIONES DE SPRITES
 
-	//temp
-	sprites["TEMP_NORMAL"], _, _ = ebitenutil.NewImageFromFile("assets/temp_sensor/temp_sensor_1-new.png")
-	sprites["TEMP_WARNING"], _, _ = ebitenutil.NewImageFromFile("assets/temp_sensor/temp_sensor_1-new.png")
-	sprites["TEMP_DANGER"], _, _ = ebitenutil.NewImageFromFile("assets/temp_sensor/temp_sensor_1-new.png")
+	//bd
+	bdSprites := []* ebiten.Image{
+		MustNewImageFromFile("assets/db/db_1-new.png"),
+		MustNewImageFromFile("assets/db/db_2-new.png"),
+	}
 
-	//ntu
-	sprites["NTU_NORMAL"], _, _ = ebitenutil.NewImageFromFile("assets/ntu_sensor/ntu_sensor_1-new.png")
-	sprites["NTU_WARNING"], _, _ = ebitenutil.NewImageFromFile("assets/ntu_sensor/ntu_sensor_1-new.png")
-	sprites["NTU_DANGER"], _, _ = ebitenutil.NewImageFromFile("assets/ntu_sensor/ntu_sensor_1-new.png")
+		//aws
+	awsprites := []* ebiten.Image{
+		MustNewImageFromFile("assets/aws/aws_1-new.png"),
+		MustNewImageFromFile("assets/aws/aws_2-new.png"),
+		MustNewImageFromFile("assets/aws/aws_3-new.png"),
+	}
+
+	//iot
+	iotSprites := []* ebiten.Image{
+		MustNewImageFromFile("assets/iot/iot_1-new.png"),
+		MustNewImageFromFile("assets/iot/iot_2-new.png"),
+		MustNewImageFromFile("assets/iot/iot_3-new.png"),
+	}
+
+		//temp
+	tempSprites := []* ebiten.Image{
+		MustNewImageFromFile("assets/temp_sensor/temp_sensor_1-new.png"),
+		MustNewImageFromFile("assets/temp_sensor/temp_sensor_2-new.png"),
+		MustNewImageFromFile("assets/temp_sensor/temp_sensor_3-new.png"),
+	}
+
+		//ph
+	phSprites := []* ebiten.Image{
+		MustNewImageFromFile("assets/ph_sensor/ph_sensor_1-new.png"),
+		MustNewImageFromFile("assets/ph_sensor/ph_sensor_2-new.png"),
+		MustNewImageFromFile("assets/ph_sensor/ph_sensor_3-new.png"),
+	}
+
+
+		//tds
+	tdsSprites := []* ebiten.Image{
+		MustNewImageFromFile("assets/tds_sensor/tds_sensor_1-new.png"),
+		MustNewImageFromFile("assets/tds_sensor/tds_sensor_2-new.png"),
+		MustNewImageFromFile("assets/tds_sensor/tds_sensor_3-new.png"),
+	}
+
+
+		//ntu
+	ntuSprites := []* ebiten.Image{
+		MustNewImageFromFile("assets/ntu_sensor/ntu_sensor_1-new.png"),
+		MustNewImageFromFile("assets/ntu_sensor/ntu_sensor_2-new.png"),
+		MustNewImageFromFile("assets/ntu_sensor/ntu_sensor_3-new.png"),
+	}
 
 
 
@@ -94,27 +134,41 @@ func NewGame(cancelCtx context.CancelFunc, exitStatus error) *GameManager {
 	}
 
 	
-	// phFrames := []*ebiten.Image{
-	// 	MustNewImageFromFile("assets/ph_sensor/arrow_ph1.png"),
-	// 	MustNewImageFromFile("assets/ph_sensor/arrow_ph2.png"),
-	// 	MustNewImageFromFile("assets/ph_sensor/arrow_ph3.png"),
-	// }
+	phFrames := []*ebiten.Image{
+		MustNewImageFromFile("assets/ph_sensor/arrowA1.png"),
+		MustNewImageFromFile("assets/ph_sensor/arrowA2.png"),
+		MustNewImageFromFile("assets/ph_sensor/arrowA3.png"),
+		MustNewImageFromFile("assets/ph_sensor/arrowA4.png"),
+		MustNewImageFromFile("assets/ph_sensor/arrowA5.png"),
+		MustNewImageFromFile("assets/ph_sensor/arrowA6.png"),
+	}
 	
-	// // TDS
-	// tdsFrames := []*ebiten.Image{
-	// 	MustNewImageFromFile("assets/tds_sensor/arrow_tds1.png"),
-	// 	MustNewImageFromFile("assets/tds_sensor/arrow_tds2.png"),
-	// 	MustNewImageFromFile("assets/tds_sensor/arrow_tds3.png"),
-	// }
+	// TDS
+	tdsFrames := []*ebiten.Image{
+		MustNewImageFromFile("assets/tds_sensor/arrowA1.png"),
+		MustNewImageFromFile("assets/tds_sensor/arrowA2.png"),
+		MustNewImageFromFile("assets/tds_sensor/arrowA3.png"),
+
+		
+	}
 
 	
-	// // NTU
-	// ntuFrames := []*ebiten.Image{
-	// 	MustNewImageFromFile("assets/ntu_sensor/arrow_ntu1.png"),
-	// 	MustNewImageFromFile("assets/ntu_sensor/arrow_ntu2.png"),
-	// 	MustNewImageFromFile("assets/ntu_sensor/arrow_ntu3.png"),
-	// }
+	// NTU
+	ntuFrames := []*ebiten.Image{
+		MustNewImageFromFile("assets/ntu_sensor/arrowA1.png"),
+		MustNewImageFromFile("assets/ntu_sensor/arrowA2.png"),
+		MustNewImageFromFile("assets/ntu_sensor/arrowA3.png"),
+		MustNewImageFromFile("assets/ntu_sensor/arrowA4.png"),
+		MustNewImageFromFile("assets/ntu_sensor/arrowA5.png"),
+		MustNewImageFromFile("assets/ntu_sensor/arrowA6.png"),
+	}
 	
+	// AWS
+	awsFrames := []*ebiten.Image{
+		MustNewImageFromFile("assets/aws/arrowA1.png"),
+		MustNewImageFromFile("assets/aws/arrowA2.png"),
+		MustNewImageFromFile("assets/aws/arrowA3.png"),
+	}
 	
 	
 	return &GameManager{
@@ -124,14 +178,29 @@ func NewGame(cancelCtx context.CancelFunc, exitStatus error) *GameManager {
 		value_tds:  0,
 
 		 
-		iotImg: deviceImg,
-		sensorSprites: sprites,
+		// iotImg: deviceImg,
+		// sensorSprites: sprites,
 		waterBucketImg: bucketImg,
-
+		
+		//animacion es flechas
 		tempAnim: NewAnimation(tempFrames, 10),
-		// phAnim: NewAnimation(phFrames, 10),
-		// tdsAnim: NewAnimation(tdsFrames, 10),
-		// ntuAnim: NewAnimation(ntuFrames, 10),
+		phAnim: NewAnimation(phFrames, 10),
+		tdsAnim: NewAnimation(tdsFrames, 10),
+		ntuAnim: NewAnimation(ntuFrames, 10),
+		awsAnim: NewAnimation(awsFrames, 10),
+
+		//animaciones sprites
+		bdSpritesAnim: NewAnimation(bdSprites, 20),
+		awsSpritesAnim: NewAnimation(awsprites,20),
+
+		iotSpritesAnim: NewAnimation(iotSprites,20),
+		tempSpritesAnim: NewAnimation(tempSprites,20),
+		phSpritesAnim: NewAnimation(phSprites,20),
+		tdsSpritesAnim: NewAnimation(tdsSprites,20),
+		ntuSpritesAnim: NewAnimation(ntuSprites,20),
+
+
+
 
 		resolution_w:  1280, 
         resolution_h:  720,
@@ -144,14 +213,28 @@ func NewGame(cancelCtx context.CancelFunc, exitStatus error) *GameManager {
 func (g *GameManager) Update() error {
 
 	g.tempAnim.Update()
-    // g.phAnim.Update()
-	// g.tdsAnim.Update()
-	// g.ntuAnim.Update()
+    g.phAnim.Update()
+	g.tdsAnim.Update()
+	g.ntuAnim.Update()
+	g.awsAnim.Update()
 
-	// Al presionar Esc o finalizar desde otra goroutine, termina juego
+	//animaciones de sprites
+	g.bdSpritesAnim.Update()
+	g.awsSpritesAnim.Update()
+
+	g.iotSpritesAnim.Update()
+	g.tempSpritesAnim.Update()
+	g.phSpritesAnim.Update()
+	g.tdsSpritesAnim.Update()
+	g.ntuSpritesAnim.Update()
+
+
+
+
+	// para poder salir 
 	if ebiten.IsKeyPressed(ebiten.KeyEscape) || g.finish {
 		println("Cancelando contexto y cerrando juego...")
-		// Cierra todas las goroutines
+		// acá cierra los goroutines 
 		g.cancelContext()
 		return g.exitStatus
 	}
@@ -198,74 +281,6 @@ func (g *GameManager) Draw(screen *ebiten.Image){
 	}
 
 
-	//PH
-	var phSprite *ebiten.Image
-    switch currentData.PHState {
-    case "WARNING":
-        phSprite = g.sensorSprites["PH_WARNING"]
-    case "DANGER":
-        phSprite = g.sensorSprites["PH_DANGER"]
-    default:
-        phSprite = g.sensorSprites["PH_NORMAL"]
-    }
-
-	if phSprite != nil {
-        opPH := &ebiten.DrawImageOptions{}
-		opPH.GeoM.Translate(float64(768), float64(428))
-        screen.DrawImage(phSprite, opPH)
-    }
-
-	//TDS
-	var tdsSprite *ebiten.Image
-	switch currentData.TDSState {
-	case "WARNING":
-		tdsSprite = g.sensorSprites["TDS_WARNING"]
-	case "DANGER":
-		tdsSprite = g.sensorSprites["TDS_DANGER"]
-	default:
-		tdsSprite = g.sensorSprites["TDS_NORMAL"]
-	}
-
-	if tdsSprite != nil {
-		opTDS := &ebiten.DrawImageOptions{}
-		opTDS.GeoM.Translate(float64(272), float64(188)) 
-		screen.DrawImage(tdsSprite, opTDS)
-	}
-
-	//TEMPERATURA
-	var tempSprite *ebiten.Image
-	switch currentData.TempState {
-	case "WARNING":
-		tempSprite = g.sensorSprites["TEMP_WARNING"]
-	case "DANGER":
-		tempSprite = g.sensorSprites["TEMP_DANGER"]
-	default:
-		tempSprite = g.sensorSprites["TEMP_NORMAL"]
-	}
-
-	if tempSprite != nil {
-		opTemp := &ebiten.DrawImageOptions{}
-		opTemp.GeoM.Translate(float64(777), float64(188)) 
-		screen.DrawImage(tempSprite, opTemp)
-	}
-
-	//NTU
-	var ntuSprite *ebiten.Image
-	switch currentData.TurbState {
-	case "WARNING":
-		ntuSprite = g.sensorSprites["NTU_WARNING"]
-	case "DANGER":
-		ntuSprite = g.sensorSprites["NTU_DANGER"]
-	default:
-		ntuSprite = g.sensorSprites["NTU_NORMAL"]
-	}
-
-	if ntuSprite != nil {
-		opNTU := &ebiten.DrawImageOptions{}
-		opNTU.GeoM.Translate(float64(272), float64(428)) 
-		screen.DrawImage(ntuSprite, opNTU)
-	}
-
 	safeText := "NO REUTILIZABLE"
     if currentData.IsWaterSafe {
         safeText = "REUTILIZABLE"
@@ -283,10 +298,28 @@ func (g *GameManager) Draw(screen *ebiten.Image){
 
 
 	//animaciones
+
+	//flechas
 	g.tempAnim.Draw(screen, float64(700), float64(260))
-	// g.phAnim.Draw(screen, float64(784), float64(338)) 
-	// g.tdsAnim.Draw(screen, float64(280), float64(100))
-	// g.ntuAnim.Draw(screen, float64(280), float64(338))
+	g.phAnim.Draw(screen, float64(619), float64(250)) 
+	g.tdsAnim.Draw(screen, float64(438), float64(240))
+	g.ntuAnim.Draw(screen, float64(393), float64(234))
+	g.awsAnim.Draw(screen, float64(752), float64(80))
+
+	//sprites
+	g.bdSpritesAnim.Draw(screen, float64(201), float64(-4))
+	g.awsSpritesAnim.Draw(screen, float64(888), float64(-4))
+
+	g.iotSpritesAnim.Draw(screen, float64(512), float64(52))
+
+	g.tempSpritesAnim.Draw(screen, float64(777), float64(188))
+
+	g.phSpritesAnim.Draw(screen, float64(768), float64(428))
+
+	g.tdsSpritesAnim.Draw(screen, float64(272), float64(188))
+
+	g.ntuSpritesAnim.Draw(screen, float64(272), float64(428))
+
 
 }
 
